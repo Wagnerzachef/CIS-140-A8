@@ -1,0 +1,63 @@
+## Assignment: Project 8
+## Version: 01
+## Author: Zachary Wagner
+## Purpose: Mastering Perl and creating interesting algorithms
+
+use strict;
+use warnings;
+use 5.26.1;
+
+my ($DATAFILEIN);
+my @users;
+my $numUsers;
+
+sub main {
+
+    verifyArguments();
+    setDataFileIn();
+    readUsers();
+    delUsers();
+    printReport();
+
+}
+
+main();
+
+sub verifyArguments(){
+    if(!(@ARGV) || !(-e $ARGV[0])) {
+        die "\n\nUse a correct file name for the command argument\n\n";
+    }
+}
+
+sub setDataFileIn(){
+    $DATAFILEIN = $ARGV[0];
+}
+
+sub readUsers(){
+    my $IN;
+    @users = ();
+
+    open($IN, '<', $DATAFILEIN);
+    while(<$IN>) {
+        print "$_";
+        @users = split(/,/);
+    }
+    close $IN;
+}
+
+sub delUsers(){
+     $numUsers = @users;
+     for(my $i = 0; $i < $numUsers; $i++){ 
+        print "\nProcessing user: $users[$i]\n\n";
+        system("sudo zip -r backup$i.zip /home/$users[$i]"); 
+        system("sudo userdel -rf $users[$i]");
+        print "\n\nUser Deleted";
+    }
+}
+
+sub printReport(){
+    print "\n\n\nAll deleted users have had zip files with all files backed up in the folder that this program was run from. Users Deleted:";
+    for(my $i = 0; $i < $numUsers; $i++){
+        print "\n$users[$i]";
+    }
+}
